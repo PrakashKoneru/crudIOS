@@ -10,12 +10,30 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+            Text("To Do List!")
+                .font(.largeTitle)
+                .bold()
+                .padding(.top, 40)
         }
         .padding()
+        VStack {
+            Text("Nothng here yet")
+                .foregroundColor(Color.gray)
+                .padding()
+        }
+        Button(action: {
+            print("No action Yet")
+        }){
+            Text("Add Task")
+                .padding()
+                .font(.headline)
+                .frame(maxWidth: .infinity)
+                .background(Color.blue)
+                .foregroundColor(Color.white)
+                .cornerRadius(10)
+                .padding(.horizontal, 20)
+        }
+        .padding(.bottom, 20)
     }
 }
 
