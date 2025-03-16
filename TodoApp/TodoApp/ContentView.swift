@@ -3,41 +3,52 @@ import SwiftUI
 struct ContentView: View {
     @State private var tasks: [String] = []
     @State private var newTask: String = ""
+    @State private var editingTaskIndex: Int? = nil
 
     var body: some View {
         VStack(alignment: .leading) {
             
-            // Title
             Text("To-Do List")
                 .font(.largeTitle)
                 .bold()
                 .padding(.top, 40)
                 .frame(maxWidth: .infinity, alignment: .center)
             
-            // Task List with Delete Button
             List {
-                ForEach(tasks, id: \.self) { task in
+                ForEach(tasks.indices, id: \.self) { index in
                     HStack {
-                        Text(task)
-                            .font(.body)
-                            .foregroundColor(.black)
+                        if editingTaskIndex == index {
+                            // Directly bind TextField to tasks[index]
+                            TextField("Edit task", text: $tasks[index])
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .frame(height: 40)
+                        } else {
+                            Text(tasks[index])
+                        }
                         
-                        Spacer() // Pushes the delete button to the right
+                        Spacer()
+                        
+                        Button(action: {
+                            editingTaskIndex = (editingTaskIndex == index) ? nil : index
+                        }) {
+                            Image(systemName: editingTaskIndex == index ? "checkmark.circle.fill" : "pencil.circle.fill")
+                                .foregroundColor(editingTaskIndex == index ? .green : .blue)
+                        }
+                        .buttonStyle(PlainButtonStyle())
 
                         Button(action: {
-                            deleteTask(task)
+                            deleteTask(at: index)
                         }) {
                             Image(systemName: "xmark.circle.fill")
-                                .foregroundColor(.blue)
+                                .foregroundColor(.red)
                         }
-                        .buttonStyle(PlainButtonStyle()) // Removes default button styling
+                        .buttonStyle(PlainButtonStyle())
                     }
-                    .padding(.vertical, 5) // Adds spacing between rows
+                    .padding(.vertical, 5)
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-            // Input Field and Button
             HStack {
                 TextField("Enter a task", text: $newTask)
                     .padding(10)
@@ -64,18 +75,16 @@ struct ContentView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
     }
-    
-    // Function to Add Task
+
     private func addTask() {
         if !newTask.isEmpty {
             tasks.append(newTask)
             newTask = ""
         }
     }
-    
-    // Function to Delete Task
-    private func deleteTask(_ task: String) {
-        tasks.removeAll { $0 == task }
+
+    private func deleteTask(at index: Int) {
+        tasks.remove(at: index)
     }
 }
 
